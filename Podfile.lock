@@ -1,16 +1,28 @@
 PODS:
+  - Charts (3.1.1):
+    - Charts/Core (= 3.1.1)
+  - Charts/Core (3.1.1)
+  - sqlite3 (3.23.0):
+    - sqlite3/common (= 3.23.0)
+  - sqlite3/common (3.23.0)
   - XLForm (4.0.0)
 
 DEPENDENCIES:
+  - Charts (~> 3.1.1)
+  - sqlite3
   - XLForm (~> 4.0)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
+    - Charts
+    - sqlite3
     - XLForm
 
 SPEC CHECKSUMS:
+  Charts: 90a4d61da0f6e06684c591e3bcab11940fe61736
+  sqlite3: 0b4029c58e2904bfea295dda95878f64dcb50b4e
   XLForm: 04110197c12187dd28a6c7295d3d8b95f4fdb4de
 
-PODFILE CHECKSUM: 064ed02c341529e1882cfd4c74c4167aa451b448
+PODFILE CHECKSUM: e67d9911a55c76a27464ee56b653dce6bfad0383
 
 COCOAPODS: 1.5.0

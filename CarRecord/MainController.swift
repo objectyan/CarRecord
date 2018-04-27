@@ -13,10 +13,10 @@ class MainController:  UITabBarController{
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.addChildVC(childVC: ChartController(), childTitle: "Chart", imageName: "", selectedImageName: "")
-        self.addChildVC(childVC: RecordController(), childTitle: "Record", imageName: "", selectedImageName: "")
-        self.addChildVC(childVC: AddController(), childTitle: "+", imageName: "", selectedImageName: "")
+        self.addChildVC(childVC: AnalysisController(), childTitle: "Analysis", imageName: "", selectedImageName: "")
         self.addChildVC(childVC: CostController(), childTitle: "Cost", imageName: "", selectedImageName: "")
+        self.addChildVC(childVC: AddController(), childTitle: "+", imageName: "", selectedImageName: "")
+        self.addChildVC(childVC: RecordController(), childTitle: "Record", imageName: "", selectedImageName: "")
         self.addChildVC(childVC: SettingController(), childTitle: "Setting", imageName: "", selectedImageName: "")
     }
     

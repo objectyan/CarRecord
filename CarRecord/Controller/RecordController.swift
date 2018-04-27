@@ -8,6 +8,6 @@
 
 import UIKit
 
-class RecordController: UIViewController {
+class RecordController: UITableViewController {
     
 }

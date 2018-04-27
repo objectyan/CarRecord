@@ -9,7 +9,7 @@
 import UIKit
 import Charts
 
-class ChartController: UIViewController, ChartViewDelegate {
+class AnalysisController: UIViewController, ChartViewDelegate {
     var chartView: LineChartView!
     
     override func viewDidLoad() {

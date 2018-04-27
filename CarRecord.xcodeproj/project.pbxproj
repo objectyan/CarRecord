@@ -14,7 +14,7 @@
 		05DFD6BF2091A0070084E298 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05DFD6BD2091A0070084E298 /* LaunchScreen.storyboard */; };
 		05DFD6C82091AB860084E298 /* AddController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DFD6C72091AB860084E298 /* AddController.swift */; };
 		05DFD6CA2091ABED0084E298 /* SettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DFD6C92091ABED0084E298 /* SettingController.swift */; };
-		05DFD6CC2091AC1F0084E298 /* ChartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DFD6CB2091AC1F0084E298 /* ChartController.swift */; };
+		05DFD6CC2091AC1F0084E298 /* AnalysisController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DFD6CB2091AC1F0084E298 /* AnalysisController.swift */; };
 		05DFD6CE2091AC480084E298 /* RecordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DFD6CD2091AC480084E298 /* RecordController.swift */; };
 		05DFD6D02091AC7E0084E298 /* CostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DFD6CF2091AC7E0084E298 /* CostController.swift */; };
 		CACDD52DF46BFB77EBDB15C8 /* Pods_CarRecord.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C5E942C25D01FA93A4922BB /* Pods_CarRecord.framework */; };
@@ -31,7 +31,7 @@
 		05DFD6C02091A0070084E298 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05DFD6C72091AB860084E298 /* AddController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddController.swift; sourceTree = "<group>"; };
 		05DFD6C92091ABED0084E298 /* SettingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingController.swift; sourceTree = "<group>"; };
-		05DFD6CB2091AC1F0084E298 /* ChartController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartController.swift; sourceTree = "<group>"; };
+		05DFD6CB2091AC1F0084E298 /* AnalysisController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisController.swift; sourceTree = "<group>"; };
 		05DFD6CD2091AC480084E298 /* RecordController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordController.swift; sourceTree = "<group>"; };
 		05DFD6CF2091AC7E0084E298 /* CostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostController.swift; sourceTree = "<group>"; };
 		1C5E942C25D01FA93A4922BB /* Pods_CarRecord.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CarRecord.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,7 +89,7 @@
 			children = (
 				05DFD6C72091AB860084E298 /* AddController.swift */,
 				05DFD6C92091ABED0084E298 /* SettingController.swift */,
-				05DFD6CB2091AC1F0084E298 /* ChartController.swift */,
+				05DFD6CB2091AC1F0084E298 /* AnalysisController.swift */,
 				05DFD6CD2091AC480084E298 /* RecordController.swift */,
 				05DFD6CF2091AC7E0084E298 /* CostController.swift */,
 			);
@@ -189,11 +189,15 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-CarRecord/Pods-CarRecord-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Charts/Charts.framework",
 				"${BUILT_PRODUCTS_DIR}/XLForm/XLForm.framework",
+				"${BUILT_PRODUCTS_DIR}/sqlite3/sqlite3.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Charts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XLForm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sqlite3.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -225,7 +229,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05DFD6CC2091AC1F0084E298 /* ChartController.swift in Sources */,
+				05DFD6CC2091AC1F0084E298 /* AnalysisController.swift in Sources */,
 				05DFD6CA2091ABED0084E298 /* SettingController.swift in Sources */,
 				05DFD6CE2091AC480084E298 /* RecordController.swift in Sources */,
 				05DFD6B42091A0060084E298 /* MainController.swift in Sources */,
