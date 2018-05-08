@@ -15,7 +15,7 @@ class MainController:  UITabBarController{
         // Do any additional setup after loading the view, typically from a nib.
         self.addChildVC(childVC: AnalysisController(), childTitle: "Analysis", imageName: "", selectedImageName: "")
         self.addChildVC(childVC: CostController(), childTitle: "Cost", imageName: "", selectedImageName: "")
-        self.addChildVC(childVC: AddController(), childTitle: "+", imageName: "", selectedImageName: "")
+        self.addChildVC(childVC: AddController(), childTitle: "Add Record", imageName: "", selectedImageName: "")
         self.addChildVC(childVC: RecordController(), childTitle: "Record", imageName: "", selectedImageName: "")
         self.addChildVC(childVC: SettingController(), childTitle: "Setting", imageName: "", selectedImageName: "")
     }
@@ -32,7 +32,7 @@ class MainController:  UITabBarController{
         childVC.tabBarItem.tag = 1
         childVC.tabBarItem.image = UIImage(named: imageName)?.withRenderingMode(.alwaysOriginal)
         childVC.tabBarItem.selectedImage = UIImage(named: selectedImageName)?.withRenderingMode(.alwaysOriginal)
-        navigation.isNavigationBarHidden = true;
+        // navigation.isNavigationBarHidden = true;
         self.addChildViewController(navigation)
     }
 }
