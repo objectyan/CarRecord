@@ -17,6 +17,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        if(!UserDefaults.standard.bool(forKey: "firstDownload")){
+            UserDefaults.standard.set(true, forKey: "firstDownLoad")
+            let database =  Database()
+            database.tableTypeCreate()
+        }
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.backgroundColor = UIColor.white
         self.window!.makeKeyAndVisible()

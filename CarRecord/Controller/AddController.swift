@@ -22,6 +22,8 @@ class AddController: XLFormViewController {
         static let OilQuantity = "OilQuantity"
     }
     
+    var database : Database!
+    
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         self.initializeForm()
@@ -53,6 +55,7 @@ class AddController: XLFormViewController {
     }
     
     private func initializeForm() {
+        self.database = Database()
         // Implementation details covered in the next section.
         let form : XLFormDescriptor
         var section : XLFormSectionDescriptor
@@ -82,23 +85,29 @@ class AddController: XLFormViewController {
             row = XLFormRowDescriptor(tag: Tags.CostType, rowType: XLFormRowDescriptorTypeSelectorActionSheet, title: "Cost type")
         }
         row.isRequired = true
-        row.selectorOptions = ["Oils", "Driving fee", "Maintenance", "Insurance and traffic", "Other"]
-        row.value = "Oils"
-        //row.action.formBlock = #selector(AddController.didTouchButton(_:))
+        var costTypeArr : [Any] = []
+        for costType in (try! database.db.prepare(database.TABLE_TYPE.filter(database.TABLE_TYPE_TYPE.like("Cost")).order(database.TABLE_TYPE_IS_SYSTEM.desc))) {
+            costTypeArr.append(XLFormOptionsObject(value: costType[database.TABLE_TYPE_VALUE], displayText: costType[database.TABLE_TYPE_NAME]))
+        }
+        row.selectorOptions = costTypeArr
+        if(costTypeArr.count>0){
+            row.value = costTypeArr[0]
+        }
         section.addFormRow(row)
         
         row = XLFormRowDescriptor(tag: Tags.Money, rowType: XLFormRowDescriptorTypeDecimal, title: "Money")
         row.isRequired = true
+        row.cellConfigAtConfigure["textField.textAlignment"] = NSTextAlignment.right.rawValue
         section.addFormRow(row)
         
         row = XLFormRowDescriptor(tag: Tags.Remarks, rowType: XLFormRowDescriptorTypeTextView, title: "Remarks")
         section.addFormRow(row)
-        
         sectionOil = XLFormSectionDescriptor.formSection(withTitle: "Oil Info")
-        sectionOil.hidden = "$\(Tags.CostType)!='Oils'"
+        sectionOil.hidden = "$\(Tags.CostType).formValue != 'Oils'"
         form.addFormSection(sectionOil)
         
         row = XLFormRowDescriptor(tag: Tags.Mileage, rowType: XLFormRowDescriptorTypeDecimal, title: "Mileage")
+        row.cellConfigAtConfigure["textField.textAlignment"] = NSTextAlignment.right.rawValue
         row.isRequired = true
         sectionOil.addFormRow(row)
         
@@ -108,18 +117,76 @@ class AddController: XLFormViewController {
         }else{
             row = XLFormRowDescriptor(tag: Tags.OilType, rowType: XLFormRowDescriptorTypeSelectorActionSheet, title: "Oil type")
         }
-        row.selectorOptions = ["", "90#", "92#", "93#", "95#", "97#", "98#", "E92#", "E93#", "E95#", "E97#", "E98#", "0#", "-10#", "-20#", "-35#", "Gas"]
-         row.isRequired = true
+        var oilTypeArr : [Any] = []
+        for oilType in (try! database.db.prepare(database.TABLE_TYPE.filter(database.TABLE_TYPE_TYPE.like("Oil")).order(database.TABLE_TYPE_IS_SYSTEM.desc))) {
+            oilTypeArr.append(XLFormOptionsObject(value: oilType[database.TABLE_TYPE_VALUE], displayText: oilType[database.TABLE_TYPE_NAME]))
+        }
+        row.selectorOptions = oilTypeArr
+        row.isRequired = true
+        if(oilTypeArr.count>0){
+            row.value = oilTypeArr[0]
+        }
         sectionOil.addFormRow(row)
         
         row = XLFormRowDescriptor(tag: Tags.UnitPrice, rowType: XLFormRowDescriptorTypeDecimal, title: "Unit Price")
         row.isRequired = true
+        row.cellConfigAtConfigure["textField.textAlignment"] = NSTextAlignment.right.rawValue
         sectionOil.addFormRow(row)
         
         row = XLFormRowDescriptor(tag: Tags.OilQuantity, rowType: XLFormRowDescriptorTypeDecimal, title: "Oil quantity")
         row.isRequired = true
+        row.cellConfigAtConfigure["textField.textAlignment"] = NSTextAlignment.right.rawValue
         sectionOil.addFormRow(row)
         
         self.form = form
+    }
+    
+    var setControl : String!
+    
+    override func formRowDescriptorValueHasChanged(_ formRow: XLFormRowDescriptor!, oldValue: Any!, newValue: Any!) {
+        super.formRowDescriptorValueHasChanged(formRow, oldValue: oldValue, newValue: newValue)
+        if((self.form.formRow(withTag: Tags.CostType)?.value! as! XLFormOptionsObject).formValue as! String == "Oils" && newValue != nil && setControl != formRow.tag){
+            var UnitPrice = self.form.formRow(withTag: Tags.UnitPrice)!;
+            var Money = self.form.formRow(withTag: Tags.Money)!;
+            var OilQuantity = self.form.formRow(withTag: Tags.OilQuantity)!;
+            switch (formRow.tag){
+            case Tags.Money:
+                if(UnitPrice.value == nil && OilQuantity.value != nil){
+                    setControl = Tags.UnitPrice
+                    UnitPrice.value = (Float(Int( 100 * ( (Money.value as? Float ?? 0) / (OilQuantity.value as? Float ?? 1)) ))/100)
+                    updateFormRow(UnitPrice)
+                }else if(UnitPrice.value != nil && OilQuantity.value == nil){
+                    setControl = Tags.OilQuantity
+                    OilQuantity.value =  (Float(Int( 100 * ((Money.value as? Float ?? 0) / (UnitPrice.value as? Float ?? 1)) ))/100)
+                    updateFormRow(OilQuantity)
+                }
+                break;
+            case Tags.UnitPrice:
+                if(Money.value == nil && OilQuantity.value != nil){
+                    setControl = Tags.Money
+                    Money.value = (Float(Int( 100 * ((UnitPrice.value as? Float ?? 0) * (OilQuantity.value as? Float ?? 0)) ))/100)
+                    updateFormRow(Money)
+                }else if(Money.value != nil){
+                    setControl = Tags.OilQuantity
+                    OilQuantity.value = (Float(Int( 100 * ((Money.value as? Float ?? 0) / (UnitPrice.value as? Float ?? 1)) ))/100)
+                    updateFormRow(OilQuantity)
+                }
+                break;
+            case Tags.OilQuantity:
+                if(Money.value != nil){
+                    setControl = Tags.UnitPrice
+                    UnitPrice.value = (Float(Int( 100 * ((Money.value as? Float ?? 0) / (OilQuantity.value as? Float ?? 1)) ))/100)
+                    updateFormRow(UnitPrice)
+                }else if(UnitPrice.value != nil && Money.value == nil){
+                    setControl = Tags.Money
+                    Money.value = (Float(Int( 100 * ((OilQuantity.value as? Float ?? 0) * (UnitPrice.value as? Float ?? 0)) ))/100)
+                    updateFormRow(Money)
+                }
+                break;
+            default:
+                break;
+            }
+            setControl = nil
+        }
     }
 }
