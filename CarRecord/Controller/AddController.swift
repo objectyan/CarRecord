@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SQLite
 
 class AddController: XLFormViewController {
     
@@ -39,18 +40,90 @@ class AddController: XLFormViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(self.savePressed(_:)))
     }
     
+    func animateCell(_ cell: UITableViewCell) {
+        let animation = CAKeyframeAnimation()
+        animation.keyPath = "position.x"
+        animation.values =  [0, 20, -20, 10, 0]
+        animation.keyTimes = [0, NSNumber(value: 1 / 6.0), NSNumber(value: 3 / 6.0), NSNumber(value: 5 / 6.0), 1]
+        animation.duration = 0.3
+        animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+        animation.isAdditive = true
+        cell.layer.add(animation, forKey: "shake")
+    }
+    
     @objc func savePressed(_ button: UIBarButtonItem)
     {
         let validationErrors : Array<NSError> = self.formValidationErrors() as! Array<NSError>
         if (validationErrors.count > 0){
             self.showFormValidationError(validationErrors.first, withTitle: "Error")
+            for errorItem in validationErrors {
+                let validationStatus : XLFormValidationStatus = errorItem.userInfo[XLValidationStatusErrorKey] as! XLFormValidationStatus
+                if let rowDescriptor = validationStatus.rowDescriptor,
+                    let indexPath = form.indexPath(ofFormRow: rowDescriptor),
+                    let cell = tableView.cellForRow(at: indexPath) {
+                    self.animateCell(cell)
+                }
+            }
             return
         }
         self.tableView.endEditing(true)
         
-        let alert = UIAlertController(title: "Valid Form", message: "No errors found!", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale.current
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        var date = dateFormatter.string(from: self.formValues()["Date"] as! Date)
+        dateFormatter.dateFormat = " HH:mm:ss"
+        date = date + dateFormatter.string(from: self.formValues()["Time"] as! Date)
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         
+        var title = "Save", message = "Success.";
+        
+        do {
+            try database.db.transaction {
+                let rowid = try database.db.run(database.TABLE_RECORD.insert(
+                    database.TABLE_RECORD_TYPE <- (self.formValues()[Tags.CostType] as! XLFormOptionsObject).formValue as! String,
+                    database.TABLE_RECORD_DATE <- dateFormatter.date(from: date) ?? Date(),
+                    database.TABLE_RECORD_REMARK <- (self.formValues()[Tags.Remarks] as? String) ?? "",
+                    database.TABLE_RECORD_MONEY <- self.formValues()[Tags.Money] as! Double
+                ))
+                if(((self.formValues()[Tags.CostType] as! XLFormOptionsObject).formValue as! String) == "Oils"){
+                    try database.db.run(database.TABLE_RECORD_MAP.insert(
+                        database.TABLE_RECORD_MAP_ID <- rowid,
+                        database.TABLE_RECORD_MAP_KEY <- Tags.Mileage,
+                        database.TABLE_RECORD_MAP_VALUE <- String.init(format: "%@", self.formValues()[Tags.Mileage]! as! CVarArg),
+                        database.TABLE_RECORD_MAP_TYPE <- "Double"
+                    ))
+                    
+                    try database.db.run(database.TABLE_RECORD_MAP.insert(
+                        database.TABLE_RECORD_MAP_ID <- rowid,
+                        database.TABLE_RECORD_MAP_KEY <- Tags.OilType,
+                        database.TABLE_RECORD_MAP_VALUE <- String.init(format: "%@", self.formValues()[Tags.OilType]! as! CVarArg),
+                        database.TABLE_RECORD_MAP_TYPE <- "String"
+                    ))
+                    
+                    try database.db.run(database.TABLE_RECORD_MAP.insert(
+                        database.TABLE_RECORD_MAP_ID <- rowid,
+                        database.TABLE_RECORD_MAP_KEY <- Tags.UnitPrice,
+                        database.TABLE_RECORD_MAP_VALUE <- String.init(format: "%@", self.formValues()[Tags.UnitPrice]! as! CVarArg),
+                        database.TABLE_RECORD_MAP_TYPE <- "Double"
+                    ))
+                    
+                    try database.db.run(database.TABLE_RECORD_MAP.insert(
+                        database.TABLE_RECORD_MAP_ID <- rowid,
+                        database.TABLE_RECORD_MAP_KEY <- Tags.OilQuantity,
+                        database.TABLE_RECORD_MAP_VALUE <- String.init(format: "%@", self.formValues()[Tags.OilQuantity]! as! CVarArg),
+                        database.TABLE_RECORD_MAP_TYPE <- "Double"
+                    ))
+                }
+            }
+            self.initializeForm()
+        } catch {
+            print(error)
+            message = "Error: \(error)"
+        }
+        
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
     
@@ -77,13 +150,8 @@ class AddController: XLFormViewController {
         row.isRequired = true
         row.cellConfigAtConfigure["locale"] =  Locale.current
         section.addFormRow(row)
-        
-        if(UIDevice.current.userInterfaceIdiom == UIUserInterfaceIdiom.pad)
-        {
-            row = XLFormRowDescriptor(tag: Tags.CostType, rowType: XLFormRowDescriptorTypeSelectorPopover, title: "Cost type")
-        }else{
-            row = XLFormRowDescriptor(tag: Tags.CostType, rowType: XLFormRowDescriptorTypeSelectorActionSheet, title: "Cost type")
-        }
+    
+        row = XLFormRowDescriptor(tag: Tags.CostType, rowType: XLFormRowDescriptorTypeSelectorActionSheet, title: "Cost type")
         row.isRequired = true
         var costTypeArr : [Any] = []
         for costType in (try! database.db.prepare(database.TABLE_TYPE.filter(database.TABLE_TYPE_TYPE.like("Cost")).order(database.TABLE_TYPE_IS_SYSTEM.desc))) {
@@ -111,12 +179,7 @@ class AddController: XLFormViewController {
         row.isRequired = true
         sectionOil.addFormRow(row)
         
-        if(UIDevice.current.userInterfaceIdiom == UIUserInterfaceIdiom.pad)
-        {
-            row = XLFormRowDescriptor(tag: Tags.OilType, rowType: XLFormRowDescriptorTypeSelectorPopover, title: "Oil type")
-        }else{
-            row = XLFormRowDescriptor(tag: Tags.OilType, rowType: XLFormRowDescriptorTypeSelectorActionSheet, title: "Oil type")
-        }
+        row = XLFormRowDescriptor(tag: Tags.OilType, rowType: XLFormRowDescriptorTypeSelectorActionSheet, title: "Oil type")
         var oilTypeArr : [Any] = []
         for oilType in (try! database.db.prepare(database.TABLE_TYPE.filter(database.TABLE_TYPE_TYPE.like("Oil")).order(database.TABLE_TYPE_IS_SYSTEM.desc))) {
             oilTypeArr.append(XLFormOptionsObject(value: oilType[database.TABLE_TYPE_VALUE], displayText: oilType[database.TABLE_TYPE_NAME]))
@@ -146,9 +209,9 @@ class AddController: XLFormViewController {
     override func formRowDescriptorValueHasChanged(_ formRow: XLFormRowDescriptor!, oldValue: Any!, newValue: Any!) {
         super.formRowDescriptorValueHasChanged(formRow, oldValue: oldValue, newValue: newValue)
         if((self.form.formRow(withTag: Tags.CostType)?.value! as! XLFormOptionsObject).formValue as! String == "Oils" && newValue != nil && setControl != formRow.tag){
-            var UnitPrice = self.form.formRow(withTag: Tags.UnitPrice)!;
-            var Money = self.form.formRow(withTag: Tags.Money)!;
-            var OilQuantity = self.form.formRow(withTag: Tags.OilQuantity)!;
+            let UnitPrice = self.form.formRow(withTag: Tags.UnitPrice)!;
+            let Money = self.form.formRow(withTag: Tags.Money)!;
+            let OilQuantity = self.form.formRow(withTag: Tags.OilQuantity)!;
             switch (formRow.tag){
             case Tags.Money:
                 if(UnitPrice.value == nil && OilQuantity.value != nil){

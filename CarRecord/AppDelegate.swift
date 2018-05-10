@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if(!UserDefaults.standard.bool(forKey: "firstDownload")){
             UserDefaults.standard.set(true, forKey: "firstDownLoad")
             let database =  Database()
-            database.tableTypeCreate()
+            database.tableCreate()
         }
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.backgroundColor = UIColor.white

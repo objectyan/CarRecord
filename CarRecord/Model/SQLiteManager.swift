@@ -33,7 +33,21 @@ struct Database {
     let TABLE_TYPE_IS_SYSTEM = Expression<Int>("isSystem")
     let TABLE_TYPE_TYPE = Expression<String>("type")
     
-    func tableTypeCreate() -> Void {
+    let TABLE_RECORD = Table("table_record")
+    let TABLE_RECORD_ID = Expression<Int64>("id")
+    let TABLE_RECORD_DATE = Expression<Date>("date")
+    let TABLE_RECORD_TYPE = Expression<String>("type")
+    let TABLE_RECORD_MONEY = Expression<Double>("money")
+    let TABLE_RECORD_REMARK = Expression<String>("remark")
+    
+    let TABLE_RECORD_MAP = Table("table_record_map")
+    let TABLE_RECORD_MAP_ID = Expression<Int64>("id")
+    let TABLE_RECORD_MAP_KEY = Expression<String>("key")
+    let TABLE_RECORD_MAP_VALUE = Expression<String>("value")
+    let TABLE_RECORD_MAP_TYPE = Expression<String>("type")
+    
+    
+    func tableCreate() -> Void {
         do {
             try db.run(TABLE_TYPE.create(ifNotExists: true) { table in
                 table.column(TABLE_TYPE_NAME)
@@ -42,14 +56,31 @@ struct Database {
                 table.column(TABLE_TYPE_IS_SYSTEM, defaultValue: 0)
                 table.primaryKey(TABLE_TYPE_TYPE, TABLE_TYPE_VALUE)
             })
-            self.tableTypeInitData()
+            
+            try db.run(TABLE_RECORD.create(ifNotExists: true) { table in
+                table.column(TABLE_RECORD_ID, primaryKey:true)
+                table.column(TABLE_RECORD_DATE)
+                table.column(TABLE_RECORD_TYPE)
+                table.column(TABLE_RECORD_MONEY)
+                table.column(TABLE_RECORD_REMARK)
+            })
+            
+            try db.run(TABLE_RECORD_MAP.create(ifNotExists: true) { table in
+                table.column(TABLE_RECORD_MAP_ID)
+                table.column(TABLE_RECORD_MAP_KEY)
+                table.column(TABLE_RECORD_MAP_VALUE)
+                table.column(TABLE_RECORD_MAP_TYPE)
+                table.primaryKey(TABLE_RECORD_MAP_ID, TABLE_RECORD_MAP_KEY)
+            })
+            
+            tableInitData()
             print("Create Cost Type Success")
         } catch {
             print("Create Cost Type Error：\(error)")
         }
     }
     
-    func tableTypeInitData() -> Void {
+    func tableInitData() -> Void {
         do {
             try db.run(TABLE_TYPE.insert(or: .replace, TABLE_TYPE_NAME <- "Oils", TABLE_TYPE_VALUE <- "Oils", TABLE_TYPE_IS_SYSTEM <- 1, TABLE_TYPE_TYPE <- "Cost"))
             try db.run(TABLE_TYPE.insert(or: .replace, TABLE_TYPE_NAME <- "Driving fee", TABLE_TYPE_VALUE <- "DrivingFee", TABLE_TYPE_IS_SYSTEM <- 1, TABLE_TYPE_TYPE <- "Cost"))

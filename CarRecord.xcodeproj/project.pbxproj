@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		054F5A1520A2904000B4A294 /* SQLiteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054F5A1420A2904000B4A294 /* SQLiteManager.swift */; };
 		054F5A1720A295B500B4A294 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 054F5A1620A295B500B4A294 /* SQLite.framework */; };
+		05BBA1B120A3FAD00059A8B8 /* SQLiteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BBA1B020A3FAD00059A8B8 /* SQLiteManager.swift */; };
 		05DFD6B22091A0060084E298 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DFD6B12091A0060084E298 /* AppDelegate.swift */; };
 		05DFD6B42091A0060084E298 /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DFD6B32091A0060084E298 /* MainController.swift */; };
 		05DFD6BA2091A0060084E298 /* CarRecord.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 05DFD6B82091A0060084E298 /* CarRecord.xcdatamodeld */; };
@@ -23,8 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		054F5A1420A2904000B4A294 /* SQLiteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteManager.swift; sourceTree = "<group>"; };
 		054F5A1620A295B500B4A294 /* SQLite.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SQLite.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		05BBA1B020A3FAD00059A8B8 /* SQLiteManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteManager.swift; sourceTree = "<group>"; };
 		05D104702092C90F00011631 /* CarRecord-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CarRecord-Bridging-Header.h"; sourceTree = "<group>"; };
 		05DFD6AE2091A0060084E298 /* CarRecord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CarRecord.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05DFD6B12091A0060084E298 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -56,6 +56,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		05BBA1AD20A3FAAC0059A8B8 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				05BBA1B020A3FAD00059A8B8 /* SQLiteManager.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		05DFD6A52091A0060084E298 = {
 			isa = PBXGroup;
 			children = (
@@ -77,7 +85,7 @@
 		05DFD6B02091A0060084E298 /* CarRecord */ = {
 			isa = PBXGroup;
 			children = (
-				054F5A1420A2904000B4A294 /* SQLiteManager.swift */,
+				05BBA1AD20A3FAAC0059A8B8 /* Model */,
 				05DFD6C62091AB690084E298 /* Controller */,
 				05DFD6B12091A0060084E298 /* AppDelegate.swift */,
 				05DFD6B32091A0060084E298 /* MainController.swift */,
@@ -242,7 +250,7 @@
 				05DFD6B42091A0060084E298 /* MainController.swift in Sources */,
 				05DFD6D02091AC7E0084E298 /* CostController.swift in Sources */,
 				05DFD6B22091A0060084E298 /* AppDelegate.swift in Sources */,
-				054F5A1520A2904000B4A294 /* SQLiteManager.swift in Sources */,
+				05BBA1B120A3FAD00059A8B8 /* SQLiteManager.swift in Sources */,
 				05DFD6BA2091A0060084E298 /* CarRecord.xcdatamodeld in Sources */,
 				05DFD6C82091AB860084E298 /* AddController.swift in Sources */,
 			);
@@ -385,6 +393,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 24G7DR366M;
 				INFOPLIST_FILE = CarRecord/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -407,6 +416,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 24G7DR366M;
 				INFOPLIST_FILE = CarRecord/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
